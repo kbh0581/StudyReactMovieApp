@@ -1,26 +1,50 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import axios from "axios";
+import Movie from "./Movie";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+
+
+class App extends React.Component {
+  state = {
+    isLoding: true, // 마운트 되자마자 로딩됨
+    movies:[]
+  };
+  /* compnet가 마운트 된후 호출된후 재 Rander 수행 */
+
+  getMovieData = async () => {
+    const {data:{data:{movies}}}= await axios.get("https://yts-proxy.now.sh/list_movies.json?sort_by=rating") // 데이터 API 가져오는 함수
+    console.log(movies);
+    this.setState({movies,isLoding:false})
+  }
+  async componentDidMount(){
+   
+    this.getMovieData();
+
+    
+  }
+
+  render(){
+    console.log("render")
+    const {isLoding,movies} = this.state
+    return (
+        <selction class="container"> 
+          {isLoding 
+          ? "Loding...." 
+          : movies.map(movie => {
+          
+          return <Movie 
+              key ={movie.id}
+              id={movie.id}
+              year={movie.year}
+              title={movie.title}
+              summary={movie.summary}
+              poster = {movie.medium_cover_image} />
+      })}
+      </selction>
+    );
+  }
+  
 }
+
 
 export default App;
